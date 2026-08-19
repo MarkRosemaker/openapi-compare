@@ -7,6 +7,10 @@
 
 </div>
 
+<p align="center">
+  <img alt="A gopher holding up two nearly identical sheets of paper, checking them against each other" src=openapi-compare.png width=500>
+</p>
+
 <h3 align="center">
   Decide when two pieces of an API spec are the same.
 </h3>
