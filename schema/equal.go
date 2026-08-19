@@ -1,6 +1,6 @@
-// Package compare provides equality and similarity comparisons for
-// github.com/MarkRosemaker/openapi schemas.
-package compare
+// Package schema provides equality and similarity comparisons for
+// github.com/MarkRosemaker/openapi Schema objects.
+package schema
 
 import (
 	"bytes"
