@@ -5,7 +5,7 @@ package compare
 import (
 	"bytes"
 	"encoding/json/jsontext"
-	"reflect"
+	"regexp"
 	"slices"
 
 	"github.com/MarkRosemaker/openapi"
@@ -58,13 +58,13 @@ func sameCore(a, b *openapi.Schema, refMatch func(a, b *openapi.SchemaRef) bool)
 		schemaRefListsMatch(a.OneOf, b.OneOf, refMatch) &&
 		schemaRefListsMatch(a.AnyOf, b.AnyOf, refMatch) &&
 		refMatch(a.Not, b.Not) &&
-		float64PtrsEqual(a.Min, b.Min) &&
-		float64PtrsEqual(a.Max, b.Max) &&
-		regexpStringsEqual(a.Pattern, b.Pattern) &&
+		ptrsEqual(a.Min, b.Min) &&
+		ptrsEqual(a.Max, b.Max) &&
+		regexpsEqual(a.Pattern, b.Pattern) &&
 		slices.EqualFunc(a.Enum, b.Enum,
 			func(c, d jsontext.Value) bool { return bytes.Equal(c, d) }) &&
 		a.MinItems == b.MinItems &&
-		uintPtrsEqual(a.MaxItems, b.MaxItems) &&
+		ptrsEqual(a.MaxItems, b.MaxItems) &&
 		refMatch(a.Items, b.Items) &&
 		schemaRefsMatch(a.Properties, b.Properties, refMatch) &&
 		slices.Equal(a.Required, b.Required) &&
@@ -135,7 +135,7 @@ func schemaRefsMatch(a, b openapi.SchemaRefs, match func(a, b *openapi.SchemaRef
 	return true
 }
 
-func float64PtrsEqual(a, b *float64) bool {
+func ptrsEqual[T comparable](a, b *T) bool {
 	if a == b {
 		return true
 	}
@@ -145,25 +145,12 @@ func float64PtrsEqual(a, b *float64) bool {
 	return *a == *b
 }
 
-func uintPtrsEqual(a, b *uint) bool {
+func regexpsEqual(a, b *regexp.Regexp) bool {
 	if a == b {
 		return true
 	}
 	if a == nil || b == nil {
 		return false
-	}
-	return *a == *b
-}
-
-func regexpStringsEqual(a, b interface{ String() string }) bool {
-	if a == b {
-		return true
-	}
-	if reflect.ValueOf(a).IsNil() != reflect.ValueOf(b).IsNil() {
-		return false
-	}
-	if reflect.ValueOf(a).IsNil() {
-		return true
 	}
 	return a.String() == b.String()
 }
