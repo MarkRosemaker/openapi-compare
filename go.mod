@@ -1,6 +1,6 @@
 module github.com/MarkRosemaker/openapi-compare
 
-go 1.26.3
+go 1.27
 
 require github.com/MarkRosemaker/openapi v0.0.0-20260820160151-de7a41b136a1
 
@@ -8,7 +8,7 @@ require (
 	cloud.google.com/go v0.123.0 // indirect
 	github.com/MarkRosemaker/errpath v0.0.0-20260425165607-bbd4959d04d9 // indirect
 	github.com/MarkRosemaker/json2yaml v0.0.0-20260507220148-d6cc0d01bff0 // indirect
-	github.com/MarkRosemaker/jsonutil v0.0.0-20260718153618-78b5039427a4 // indirect
+	github.com/MarkRosemaker/jsonutil v0.0.0-20260820212410-12ba6685df41 // indirect
 	github.com/MarkRosemaker/ordmap v0.0.0-20260820160128-6fdc6d1395b1 // indirect
 	github.com/MarkRosemaker/yaml v0.0.0-20260508005758-fe21a538b084 // indirect
 	github.com/MarkRosemaker/yaml2json v0.0.0-20260507220136-7748efc522b2 // indirect
