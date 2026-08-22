@@ -8,7 +8,7 @@
 </div>
 
 <p align="center">
-  <img alt="A gopher holding up two nearly identical sheets of paper, checking them against each other" src=openapi-compare.jpg width=500>
+  <img alt="A gopher holding up two OpenAPI schemas, checking them against each other" src=openapi-compare.jpg width=500>
 </p>
 
 <h3 align="center">
