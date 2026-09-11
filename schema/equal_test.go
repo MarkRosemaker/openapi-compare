@@ -176,12 +176,15 @@ func TestEqualAndSameShape(t *testing.T) {
 			if got := Equal(tt.a, tt.b); got != tt.wantEqual {
 				t.Errorf("Equal() = %v, want %v", got, tt.wantEqual)
 			}
+
 			if got := Equal(tt.b, tt.a); got != tt.wantEqual {
 				t.Errorf("Equal() (swapped) = %v, want %v", got, tt.wantEqual)
 			}
+
 			if got := SameShape(tt.a, tt.b); got != tt.wantSameShape {
 				t.Errorf("SameShape() = %v, want %v", got, tt.wantSameShape)
 			}
+
 			if got := SameShape(tt.b, tt.a); got != tt.wantSameShape {
 				t.Errorf("SameShape() (swapped) = %v, want %v", got, tt.wantSameShape)
 			}
