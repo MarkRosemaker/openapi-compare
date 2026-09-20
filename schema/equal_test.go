@@ -24,9 +24,8 @@ func stringSchema() *openapi.Schema {
 
 func TestEqualAndSameShape(t *testing.T) {
 	tests := []struct {
-		a             *openapi.Schema
-		b             *openapi.Schema
 		name          string
+		a, b          *openapi.Schema
 		wantEqual     bool
 		wantSameShape bool
 	}{
