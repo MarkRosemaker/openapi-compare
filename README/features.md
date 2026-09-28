@@ -14,8 +14,11 @@ reported as the same shape.
 Both functions recurse consistently. `Equal` recurses through `Equal`, `SameShape`
 through `SameShape`, so a difference buried three levels deep inside a property is
 surfaced by exactly the comparison that cares about it. Composition keywords
-(`allOf`, `oneOf`, `anyOf`, `not`), `items`, `properties`, and
+(`allOf`, `oneOf`, `anyOf`, `not`), `prefixItems`, `items`, `properties`, and
 `additionalProperties` are all covered.
+
+`SameShape` treats an absent `additionalProperties`, `true`, and the empty schema
+as the same, since each accepts any extra property. `Equal` tells them apart.
 
 `example` is ignored by both. Per the OpenAPI and JSON Schema specifications it is
 documentation only and never affects what an instance validates against.

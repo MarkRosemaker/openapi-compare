@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"encoding/json/jsontext"
 	"testing"
 
 	"github.com/MarkRosemaker/openapi"
@@ -168,6 +169,76 @@ func TestEqualAndSameShape(t *testing.T) {
 			b:             &openapi.Schema{Properties: openapi.SchemaRefs{"p": namedRef("#/components/schemas/Bar", "", "")}},
 			wantEqual:     false,
 			wantSameShape: false,
+		},
+		{
+			name:          "different nullable",
+			a:             &openapi.Schema{Type: openapi.TypeString, Nullable: true},
+			b:             stringSchema(),
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "different const",
+			a:             &openapi.Schema{Const: jsontext.Value(`400`)},
+			b:             &openapi.Schema{Const: jsontext.Value(`401`)},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "different prefixItems",
+			a:             &openapi.Schema{Type: openapi.TypeArray, PrefixItems: openapi.SchemaRefList{inlineRef(stringSchema())}},
+			b:             &openapi.Schema{Type: openapi.TypeArray, PrefixItems: openapi.SchemaRefList{inlineRef(&openapi.Schema{Type: openapi.TypeInteger})}},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "additionalProperties absent and true",
+			a:             &openapi.Schema{Type: openapi.TypeObject},
+			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Allowed: true}},
+			wantEqual:     false,
+			wantSameShape: true,
+		},
+		{
+			name:          "additionalProperties true and the empty schema",
+			a:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Allowed: true}},
+			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: inlineRef(&openapi.Schema{Description: "anything"})}},
+			wantEqual:     false,
+			wantSameShape: true,
+		},
+		{
+			name:          "additionalProperties true and false",
+			a:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Allowed: true}},
+			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{}},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "additionalProperties absent and false",
+			a:             &openapi.Schema{Type: openapi.TypeObject},
+			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{}},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "additionalProperties boolean and schema",
+			a:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{}},
+			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: inlineRef(stringSchema())}},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "additionalProperties schemas differ only in description",
+			a:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: inlineRef(&openapi.Schema{Type: openapi.TypeString, Description: "a"})}},
+			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: inlineRef(&openapi.Schema{Type: openapi.TypeString, Description: "b"})}},
+			wantEqual:     false,
+			wantSameShape: true,
+		},
+		{
+			name:          "additionalProperties identical",
+			a:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: inlineRef(stringSchema())}},
+			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: inlineRef(stringSchema())}},
+			wantEqual:     true,
+			wantSameShape: true,
 		},
 	}
 
