@@ -10,13 +10,13 @@
 It does **not** ignore specification extensions or the `discriminator`: an `x-`
 extension can carry meaning that a generic comparison has no way to reason about,
 and a discriminator decides how code tells the alternatives apart, so schemas that
-differ in either are never reported as the same shape.
+differ in either are never reported as the same shape. A discriminator's `mapping` counts too, with a schema's name and a reference to it treated alike.
 
 Both functions recurse consistently. `Equal` recurses through `Equal`, `SameShape`
 through `SameShape`, so a difference buried three levels deep inside a property is
 surfaced by exactly the comparison that cares about it. Composition keywords
-(`allOf`, `oneOf`, `anyOf`, `not`), `prefixItems`, `items`, `properties`, and
-`additionalProperties` are all covered.
+(`allOf`, `oneOf`, `anyOf`, `not`), `prefixItems`, `items`, `properties`,
+`additionalProperties` and `propertyNames` are all covered.
 
 A `$ref` is compared by where it points, not by following it: two references to
 the same schema match, and a schema that refers to itself compares without

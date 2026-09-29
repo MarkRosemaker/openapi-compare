@@ -15,6 +15,13 @@ func stringSchema() *openapi.Schema {
 	return &openapi.Schema{Type: openapi.TypeString}
 }
 
+func union(mapping openapi.MapOfStrings) *openapi.Schema {
+	return &openapi.Schema{
+		OneOf:         openapi.SchemaList{ref("#/components/schemas/Cat", ""), ref("#/components/schemas/Dog", "")},
+		Discriminator: &openapi.Discriminator{PropertyName: "kind", Mapping: mapping},
+	}
+}
+
 func TestEqualAndSameShape(t *testing.T) {
 	tests := []struct {
 		name          string
@@ -175,6 +182,55 @@ func TestEqualAndSameShape(t *testing.T) {
 			b:             &openapi.Schema{Const: jsontext.Value(`401`)},
 			wantEqual:     false,
 			wantSameShape: false,
+		},
+		{
+			name:          "different multipleOf",
+			a:             &openapi.Schema{Type: openapi.TypeInteger, MultipleOf: new(4.0)},
+			b:             &openapi.Schema{Type: openapi.TypeInteger, MultipleOf: new(8.0)},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "multipleOf on one side",
+			a:             &openapi.Schema{Type: openapi.TypeInteger, MultipleOf: new(4.0)},
+			b:             &openapi.Schema{Type: openapi.TypeInteger},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "different propertyNames",
+			a:             &openapi.Schema{Type: openapi.TypeObject, PropertyNames: &openapi.Schema{Type: openapi.TypeString, Enum: []jsontext.Value{jsontext.Value(`"north"`)}}},
+			b:             &openapi.Schema{Type: openapi.TypeObject, PropertyNames: &openapi.Schema{Type: openapi.TypeString, Enum: []jsontext.Value{jsontext.Value(`"south"`)}}},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "propertyNames differ only in description",
+			a:             &openapi.Schema{Type: openapi.TypeObject, PropertyNames: &openapi.Schema{Type: openapi.TypeString, Description: "a"}},
+			b:             &openapi.Schema{Type: openapi.TypeObject, PropertyNames: &openapi.Schema{Type: openapi.TypeString, Description: "b"}},
+			wantEqual:     false,
+			wantSameShape: true,
+		},
+		{
+			name:          "different discriminator mapping",
+			a:             union(openapi.MapOfStrings{"cat": {Value: "Cat"}}),
+			b:             union(openapi.MapOfStrings{"cat": {Value: "Dog"}}),
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "discriminator mapping on one side",
+			a:             union(openapi.MapOfStrings{"cat": {Value: "Cat"}}),
+			b:             union(nil),
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "discriminator mapping by name and by reference",
+			a:             union(openapi.MapOfStrings{"cat": {Value: "Cat"}}),
+			b:             union(openapi.MapOfStrings{"cat": {Value: "#/components/schemas/Cat"}}),
+			wantEqual:     true,
+			wantSameShape: true,
 		},
 		{
 			name:          "different prefixItems",
