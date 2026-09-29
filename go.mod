@@ -2,7 +2,7 @@ module github.com/MarkRosemaker/openapi-compare
 
 go 1.27
 
-require github.com/MarkRosemaker/openapi v0.0.0-20260928232605-32d203cb374a
+require github.com/MarkRosemaker/openapi v0.0.0-20260929010253-82d450126b77
 
 require (
 	cloud.google.com/go v0.123.0 // indirect

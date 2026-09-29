@@ -7,16 +7,8 @@ import (
 	"github.com/MarkRosemaker/openapi"
 )
 
-func inlineRef(s *openapi.Schema) *openapi.SchemaRef {
-	return &openapi.SchemaRef{Value: s}
-}
-
-func namedRef(id, summary, description string) *openapi.SchemaRef {
-	return &openapi.SchemaRef{Ref: &openapi.Reference{
-		Identifier:  id,
-		Summary:     summary,
-		Description: description,
-	}}
+func ref(id, description string) *openapi.Schema {
+	return &openapi.Schema{Description: description, Ref: &openapi.SchemaRef{Identifier: id}}
 }
 
 func stringSchema() *openapi.Schema {
@@ -95,30 +87,30 @@ func TestEqualAndSameShape(t *testing.T) {
 		},
 		{
 			name: "different oneOf",
-			a: &openapi.Schema{OneOf: openapi.SchemaRefList{
-				inlineRef(&openapi.Schema{Type: openapi.TypeString}),
+			a: &openapi.Schema{OneOf: openapi.SchemaList{
+				&openapi.Schema{Type: openapi.TypeString},
 			}},
-			b: &openapi.Schema{OneOf: openapi.SchemaRefList{
-				inlineRef(&openapi.Schema{Type: openapi.TypeInteger}),
+			b: &openapi.Schema{OneOf: openapi.SchemaList{
+				&openapi.Schema{Type: openapi.TypeInteger},
 			}},
 			wantEqual:     false,
 			wantSameShape: false,
 		},
 		{
 			name: "different anyOf",
-			a: &openapi.Schema{AnyOf: openapi.SchemaRefList{
-				inlineRef(&openapi.Schema{Type: openapi.TypeString}),
+			a: &openapi.Schema{AnyOf: openapi.SchemaList{
+				&openapi.Schema{Type: openapi.TypeString},
 			}},
-			b: &openapi.Schema{AnyOf: openapi.SchemaRefList{
-				inlineRef(&openapi.Schema{Type: openapi.TypeBoolean}),
+			b: &openapi.Schema{AnyOf: openapi.SchemaList{
+				&openapi.Schema{Type: openapi.TypeBoolean},
 			}},
 			wantEqual:     false,
 			wantSameShape: false,
 		},
 		{
 			name:          "different not",
-			a:             &openapi.Schema{Not: inlineRef(&openapi.Schema{Type: openapi.TypeString})},
-			b:             &openapi.Schema{Not: inlineRef(&openapi.Schema{Type: openapi.TypeInteger})},
+			a:             &openapi.Schema{Not: &openapi.Schema{Type: openapi.TypeString}},
+			b:             &openapi.Schema{Not: &openapi.Schema{Type: openapi.TypeInteger}},
 			wantEqual:     false,
 			wantSameShape: false,
 		},
@@ -126,14 +118,14 @@ func TestEqualAndSameShape(t *testing.T) {
 			name: "nested property differs only in description",
 			a: &openapi.Schema{
 				Type: openapi.TypeObject,
-				Properties: openapi.SchemaRefs{
-					"name": inlineRef(&openapi.Schema{Type: openapi.TypeString, Description: "one"}),
+				Properties: openapi.Schemas{
+					"name": &openapi.Schema{Type: openapi.TypeString, Description: "one"},
 				},
 			},
 			b: &openapi.Schema{
 				Type: openapi.TypeObject,
-				Properties: openapi.SchemaRefs{
-					"name": inlineRef(&openapi.Schema{Type: openapi.TypeString, Description: "two"}),
+				Properties: openapi.Schemas{
+					"name": &openapi.Schema{Type: openapi.TypeString, Description: "two"},
 				},
 			},
 			wantEqual:     false,
@@ -143,30 +135,30 @@ func TestEqualAndSameShape(t *testing.T) {
 			name: "nested property differs in type",
 			a: &openapi.Schema{
 				Type: openapi.TypeObject,
-				Properties: openapi.SchemaRefs{
-					"name": inlineRef(&openapi.Schema{Type: openapi.TypeString}),
+				Properties: openapi.Schemas{
+					"name": &openapi.Schema{Type: openapi.TypeString},
 				},
 			},
 			b: &openapi.Schema{
 				Type: openapi.TypeObject,
-				Properties: openapi.SchemaRefs{
-					"name": inlineRef(&openapi.Schema{Type: openapi.TypeInteger}),
+				Properties: openapi.Schemas{
+					"name": &openapi.Schema{Type: openapi.TypeInteger},
 				},
 			},
 			wantEqual:     false,
 			wantSameShape: false,
 		},
 		{
-			name:          "same ref identifier, different summary",
-			a:             &openapi.Schema{Properties: openapi.SchemaRefs{"p": namedRef("#/components/schemas/Foo", "a", "")}},
-			b:             &openapi.Schema{Properties: openapi.SchemaRefs{"p": namedRef("#/components/schemas/Foo", "b", "")}},
+			name:          "same ref, different description beside it",
+			a:             &openapi.Schema{Properties: openapi.Schemas{"p": ref("#/components/schemas/Foo", "a")}},
+			b:             &openapi.Schema{Properties: openapi.Schemas{"p": ref("#/components/schemas/Foo", "b")}},
 			wantEqual:     false,
 			wantSameShape: true,
 		},
 		{
 			name:          "different ref identifier",
-			a:             &openapi.Schema{Properties: openapi.SchemaRefs{"p": namedRef("#/components/schemas/Foo", "", "")}},
-			b:             &openapi.Schema{Properties: openapi.SchemaRefs{"p": namedRef("#/components/schemas/Bar", "", "")}},
+			a:             &openapi.Schema{Properties: openapi.Schemas{"p": ref("#/components/schemas/Foo", "")}},
+			b:             &openapi.Schema{Properties: openapi.Schemas{"p": ref("#/components/schemas/Bar", "")}},
 			wantEqual:     false,
 			wantSameShape: false,
 		},
@@ -186,8 +178,8 @@ func TestEqualAndSameShape(t *testing.T) {
 		},
 		{
 			name:          "different prefixItems",
-			a:             &openapi.Schema{Type: openapi.TypeArray, PrefixItems: openapi.SchemaRefList{inlineRef(stringSchema())}},
-			b:             &openapi.Schema{Type: openapi.TypeArray, PrefixItems: openapi.SchemaRefList{inlineRef(&openapi.Schema{Type: openapi.TypeInteger})}},
+			a:             &openapi.Schema{Type: openapi.TypeArray, PrefixItems: openapi.SchemaList{stringSchema()}},
+			b:             &openapi.Schema{Type: openapi.TypeArray, PrefixItems: openapi.SchemaList{&openapi.Schema{Type: openapi.TypeInteger}}},
 			wantEqual:     false,
 			wantSameShape: false,
 		},
@@ -201,7 +193,7 @@ func TestEqualAndSameShape(t *testing.T) {
 		{
 			name:          "additionalProperties true and the empty schema",
 			a:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Allowed: true}},
-			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: inlineRef(&openapi.Schema{Description: "anything"})}},
+			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: &openapi.Schema{Description: "anything"}}},
 			wantEqual:     false,
 			wantSameShape: true,
 		},
@@ -222,21 +214,112 @@ func TestEqualAndSameShape(t *testing.T) {
 		{
 			name:          "additionalProperties boolean and schema",
 			a:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{}},
-			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: inlineRef(stringSchema())}},
+			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: stringSchema()}},
 			wantEqual:     false,
 			wantSameShape: false,
 		},
 		{
 			name:          "additionalProperties schemas differ only in description",
-			a:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: inlineRef(&openapi.Schema{Type: openapi.TypeString, Description: "a"})}},
-			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: inlineRef(&openapi.Schema{Type: openapi.TypeString, Description: "b"})}},
+			a:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: &openapi.Schema{Type: openapi.TypeString, Description: "a"}}},
+			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: &openapi.Schema{Type: openapi.TypeString, Description: "b"}}},
 			wantEqual:     false,
 			wantSameShape: true,
 		},
 		{
 			name:          "additionalProperties identical",
-			a:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: inlineRef(stringSchema())}},
-			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: inlineRef(stringSchema())}},
+			a:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: stringSchema()}},
+			b:             &openapi.Schema{Type: openapi.TypeObject, AdditionalProperties: &openapi.AdditionalProperties{Schema: stringSchema()}},
+			wantEqual:     true,
+			wantSameShape: true,
+		},
+		{
+			name:          "ref and inline",
+			a:             &openapi.Schema{Properties: openapi.Schemas{"p": ref("#/components/schemas/Foo", "")}},
+			b:             &openapi.Schema{Properties: openapi.Schemas{"p": stringSchema()}},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "ref deprecated beside it",
+			a:             &openapi.Schema{Deprecated: true, Ref: &openapi.SchemaRef{Identifier: "#/components/schemas/Foo"}},
+			b:             ref("#/components/schemas/Foo", ""),
+			wantEqual:     false,
+			wantSameShape: true,
+		},
+		{
+			name:          "ref with a constraint beside it",
+			a:             &openapi.Schema{Type: openapi.TypeString, MaxLength: new(uint(3)), Ref: &openapi.SchemaRef{Identifier: "#/components/schemas/Foo"}},
+			b:             &openapi.Schema{Type: openapi.TypeString, Ref: &openapi.SchemaRef{Identifier: "#/components/schemas/Foo"}},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "different minLength",
+			a:             &openapi.Schema{Type: openapi.TypeString, MinLength: 1},
+			b:             stringSchema(),
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "different maxLength",
+			a:             &openapi.Schema{Type: openapi.TypeString, MaxLength: new(uint(5))},
+			b:             &openapi.Schema{Type: openapi.TypeString, MaxLength: new(uint(6))},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "different exclusiveMinimum",
+			a:             &openapi.Schema{Type: openapi.TypeNumber, ExclusiveMin: new(0.0)},
+			b:             &openapi.Schema{Type: openapi.TypeNumber},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "different exclusiveMaximum",
+			a:             &openapi.Schema{Type: openapi.TypeNumber, ExclusiveMax: new(1.0)},
+			b:             &openapi.Schema{Type: openapi.TypeNumber, ExclusiveMax: new(2.0)},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "different uniqueItems",
+			a:             &openapi.Schema{Type: openapi.TypeArray, UniqueItems: true},
+			b:             &openapi.Schema{Type: openapi.TypeArray},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "different maxProperties",
+			a:             &openapi.Schema{Type: openapi.TypeObject, MaxProperties: new(uint(1))},
+			b:             &openapi.Schema{Type: openapi.TypeObject},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "different discriminator",
+			a:             &openapi.Schema{OneOf: openapi.SchemaList{stringSchema()}, Discriminator: &openapi.Discriminator{PropertyName: "kind"}},
+			b:             &openapi.Schema{OneOf: openapi.SchemaList{stringSchema()}, Discriminator: &openapi.Discriminator{PropertyName: "type"}},
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "different deprecated only",
+			a:             &openapi.Schema{Type: openapi.TypeString, Deprecated: true},
+			b:             stringSchema(),
+			wantEqual:     false,
+			wantSameShape: true,
+		},
+		{
+			name:          "different examples only",
+			a:             &openapi.Schema{Type: openapi.TypeString, Examples: []jsontext.Value{jsontext.Value(`"a"`)}},
+			b:             stringSchema(),
+			wantEqual:     true,
+			wantSameShape: true,
+		},
+		{
+			name:          "self-referential, not followed",
+			a:             &openapi.Schema{Type: openapi.TypeObject, Properties: openapi.Schemas{"next": ref("#/components/schemas/Node", "")}},
+			b:             &openapi.Schema{Type: openapi.TypeObject, Properties: openapi.Schemas{"next": ref("#/components/schemas/Node", "")}},
 			wantEqual:     true,
 			wantSameShape: true,
 		},
