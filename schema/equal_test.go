@@ -184,6 +184,20 @@ func TestEqualAndSameShape(t *testing.T) {
 			wantSameShape: false,
 		},
 		{
+			name:          "empty enum and none",
+			a:             &openapi.Schema{Type: openapi.TypeString, Enum: []jsontext.Value{}},
+			b:             stringSchema(),
+			wantEqual:     false,
+			wantSameShape: false,
+		},
+		{
+			name:          "two empty enums",
+			a:             &openapi.Schema{Type: openapi.TypeString, Enum: []jsontext.Value{}},
+			b:             &openapi.Schema{Type: openapi.TypeString, Enum: []jsontext.Value{}},
+			wantEqual:     true,
+			wantSameShape: true,
+		},
+		{
 			name:          "different multipleOf",
 			a:             &openapi.Schema{Type: openapi.TypeInteger, MultipleOf: new(4.0)},
 			b:             &openapi.Schema{Type: openapi.TypeInteger, MultipleOf: new(8.0)},
