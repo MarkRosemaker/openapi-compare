@@ -73,6 +73,9 @@ recursing forever. Keywords beside a `$ref` are compared like any other.
 `SameShape` treats an absent `additionalProperties`, `true`, and the empty schema
 as the same, since each accepts any extra property. `Equal` tells them apart.
 
+An absent `enum` and an empty one are never the same: the first allows any value,
+the second none.
+
 `example` and `examples` are ignored by both. Per the OpenAPI and JSON Schema specifications it is
 documentation only and never affects what an instance validates against.
 
