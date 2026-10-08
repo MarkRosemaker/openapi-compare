@@ -1,0 +1,837 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Comparisons",
+    "description": "Each component but the five a case refers to is a case: Equal and SameShape compare its properties a and b, either way round, and must give x-equal and x-same-shape. Edit it by hand.",
+    "version": "1"
+  },
+  "components": {
+    "schemas": {
+      "Foo": {
+        "type": "object"
+      },
+      "Bar": {
+        "type": "object"
+      },
+      "Cat": {
+        "type": "object"
+      },
+      "Dog": {
+        "type": "object"
+      },
+      "Node": {
+        "type": "object"
+      },
+      "identical": {
+        "properties": {
+          "a": {
+            "type": "string"
+          },
+          "b": {
+            "type": "string"
+          }
+        },
+        "x-equal": true,
+        "x-same-shape": true
+      },
+      "different-type": {
+        "properties": {
+          "a": {
+            "type": "string"
+          },
+          "b": {
+            "type": "integer"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-title-only": {
+        "properties": {
+          "a": {
+            "title": "A",
+            "type": "string"
+          },
+          "b": {
+            "title": "B",
+            "type": "string"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": true
+      },
+      "different-description-only": {
+        "properties": {
+          "a": {
+            "description": "one",
+            "type": "string"
+          },
+          "b": {
+            "description": "two",
+            "type": "string"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": true
+      },
+      "different-default-only": {
+        "properties": {
+          "a": {
+            "type": "string",
+            "default": "a"
+          },
+          "b": {
+            "type": "string",
+            "default": "b"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": true
+      },
+      "different-example-only": {
+        "properties": {
+          "a": {
+            "type": "string",
+            "example": "a"
+          },
+          "b": {
+            "type": "string",
+            "example": "b"
+          }
+        },
+        "x-equal": true,
+        "x-same-shape": true
+      },
+      "different-extensions": {
+        "properties": {
+          "a": {
+            "type": "string",
+            "x-a": 1
+          },
+          "b": {
+            "type": "string",
+            "x-a": 2
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-oneOf": {
+        "properties": {
+          "a": {
+            "oneOf": [
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "b": {
+            "oneOf": [
+              {
+                "type": "integer"
+              }
+            ]
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-anyOf": {
+        "properties": {
+          "a": {
+            "anyOf": [
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "b": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-not": {
+        "properties": {
+          "a": {
+            "not": {
+              "type": "string"
+            }
+          },
+          "b": {
+            "not": {
+              "type": "integer"
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "nested-property-differs-only-in-description": {
+        "properties": {
+          "a": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "one",
+                "type": "string"
+              }
+            }
+          },
+          "b": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "two",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": true
+      },
+      "nested-property-differs-in-type": {
+        "properties": {
+          "a": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "b": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "same-ref-different-description-beside-it": {
+        "properties": {
+          "a": {
+            "properties": {
+              "p": {
+                "description": "a",
+                "$ref": "#/components/schemas/Foo"
+              }
+            }
+          },
+          "b": {
+            "properties": {
+              "p": {
+                "description": "b",
+                "$ref": "#/components/schemas/Foo"
+              }
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": true
+      },
+      "different-ref-identifier": {
+        "properties": {
+          "a": {
+            "properties": {
+              "p": {
+                "$ref": "#/components/schemas/Foo"
+              }
+            }
+          },
+          "b": {
+            "properties": {
+              "p": {
+                "$ref": "#/components/schemas/Bar"
+              }
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-nullable": {
+        "properties": {
+          "a": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "b": {
+            "type": "string"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-const": {
+        "properties": {
+          "a": {
+            "const": 400
+          },
+          "b": {
+            "const": 401
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "empty-enum-and-none": {
+        "properties": {
+          "a": {
+            "type": "string",
+            "enum": []
+          },
+          "b": {
+            "type": "string"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "two-empty-enums": {
+        "properties": {
+          "a": {
+            "type": "string",
+            "enum": []
+          },
+          "b": {
+            "type": "string",
+            "enum": []
+          }
+        },
+        "x-equal": true,
+        "x-same-shape": true
+      },
+      "different-multipleOf": {
+        "properties": {
+          "a": {
+            "type": "integer",
+            "multipleOf": 4
+          },
+          "b": {
+            "type": "integer",
+            "multipleOf": 8
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "multipleOf-on-one-side": {
+        "properties": {
+          "a": {
+            "type": "integer",
+            "multipleOf": 4
+          },
+          "b": {
+            "type": "integer"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-propertyNames": {
+        "properties": {
+          "a": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "enum": [
+                "north"
+              ]
+            }
+          },
+          "b": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "enum": [
+                "south"
+              ]
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "propertyNames-differ-only-in-description": {
+        "properties": {
+          "a": {
+            "type": "object",
+            "propertyNames": {
+              "description": "a",
+              "type": "string"
+            }
+          },
+          "b": {
+            "type": "object",
+            "propertyNames": {
+              "description": "b",
+              "type": "string"
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": true
+      },
+      "different-discriminator-mapping": {
+        "properties": {
+          "a": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Cat"
+              },
+              {
+                "$ref": "#/components/schemas/Dog"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "kind",
+              "mapping": {
+                "cat": "Cat"
+              }
+            }
+          },
+          "b": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Cat"
+              },
+              {
+                "$ref": "#/components/schemas/Dog"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "kind",
+              "mapping": {
+                "cat": "Dog"
+              }
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "discriminator-mapping-on-one-side": {
+        "properties": {
+          "a": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Cat"
+              },
+              {
+                "$ref": "#/components/schemas/Dog"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "kind",
+              "mapping": {
+                "cat": "Cat"
+              }
+            }
+          },
+          "b": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Cat"
+              },
+              {
+                "$ref": "#/components/schemas/Dog"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "kind"
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "discriminator-mapping-by-name-and-by-reference": {
+        "properties": {
+          "a": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Cat"
+              },
+              {
+                "$ref": "#/components/schemas/Dog"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "kind",
+              "mapping": {
+                "cat": "Cat"
+              }
+            }
+          },
+          "b": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Cat"
+              },
+              {
+                "$ref": "#/components/schemas/Dog"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "kind",
+              "mapping": {
+                "cat": "#/components/schemas/Cat"
+              }
+            }
+          }
+        },
+        "x-equal": true,
+        "x-same-shape": true
+      },
+      "different-prefixItems": {
+        "properties": {
+          "a": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "b": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "integer"
+              }
+            ]
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "additionalProperties-absent-and-true": {
+        "properties": {
+          "a": {
+            "type": "object"
+          },
+          "b": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": true
+      },
+      "additionalProperties-true-and-the-empty-schema": {
+        "properties": {
+          "a": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "b": {
+            "type": "object",
+            "additionalProperties": {
+              "description": "anything"
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": true
+      },
+      "additionalProperties-true-and-false": {
+        "properties": {
+          "a": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "b": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "additionalProperties-absent-and-false": {
+        "properties": {
+          "a": {
+            "type": "object"
+          },
+          "b": {
+            "type": "object",
+            "additionalProperties": false
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "additionalProperties-boolean-and-schema": {
+        "properties": {
+          "a": {
+            "type": "object",
+            "additionalProperties": false
+          },
+          "b": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "additionalProperties-schemas-differ-only-in-description": {
+        "properties": {
+          "a": {
+            "type": "object",
+            "additionalProperties": {
+              "description": "a",
+              "type": "string"
+            }
+          },
+          "b": {
+            "type": "object",
+            "additionalProperties": {
+              "description": "b",
+              "type": "string"
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": true
+      },
+      "additionalProperties-identical": {
+        "properties": {
+          "a": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "b": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "x-equal": true,
+        "x-same-shape": true
+      },
+      "ref-and-inline": {
+        "properties": {
+          "a": {
+            "properties": {
+              "p": {
+                "$ref": "#/components/schemas/Foo"
+              }
+            }
+          },
+          "b": {
+            "properties": {
+              "p": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "ref-deprecated-beside-it": {
+        "properties": {
+          "a": {
+            "deprecated": true,
+            "$ref": "#/components/schemas/Foo"
+          },
+          "b": {
+            "$ref": "#/components/schemas/Foo"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": true
+      },
+      "ref-with-a-constraint-beside-it": {
+        "properties": {
+          "a": {
+            "type": "string",
+            "maxLength": 3,
+            "$ref": "#/components/schemas/Foo"
+          },
+          "b": {
+            "type": "string",
+            "$ref": "#/components/schemas/Foo"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-minLength": {
+        "properties": {
+          "a": {
+            "type": "string",
+            "minLength": 1
+          },
+          "b": {
+            "type": "string"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-maxLength": {
+        "properties": {
+          "a": {
+            "type": "string",
+            "maxLength": 5
+          },
+          "b": {
+            "type": "string",
+            "maxLength": 6
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-exclusiveMinimum": {
+        "properties": {
+          "a": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "b": {
+            "type": "number"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-exclusiveMaximum": {
+        "properties": {
+          "a": {
+            "type": "number",
+            "exclusiveMaximum": 1
+          },
+          "b": {
+            "type": "number",
+            "exclusiveMaximum": 2
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-uniqueItems": {
+        "properties": {
+          "a": {
+            "type": "array",
+            "uniqueItems": true
+          },
+          "b": {
+            "type": "array"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-maxProperties": {
+        "properties": {
+          "a": {
+            "type": "object",
+            "maxProperties": 1
+          },
+          "b": {
+            "type": "object"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-discriminator": {
+        "properties": {
+          "a": {
+            "oneOf": [
+              {
+                "type": "string"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "kind"
+            }
+          },
+          "b": {
+            "oneOf": [
+              {
+                "type": "string"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "type"
+            }
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": false
+      },
+      "different-deprecated-only": {
+        "properties": {
+          "a": {
+            "type": "string",
+            "deprecated": true
+          },
+          "b": {
+            "type": "string"
+          }
+        },
+        "x-equal": false,
+        "x-same-shape": true
+      },
+      "different-examples-only": {
+        "properties": {
+          "a": {
+            "type": "string",
+            "examples": [
+              "a"
+            ]
+          },
+          "b": {
+            "type": "string"
+          }
+        },
+        "x-equal": true,
+        "x-same-shape": true
+      },
+      "self-referential-not-followed": {
+        "properties": {
+          "a": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "$ref": "#/components/schemas/Node"
+              }
+            }
+          },
+          "b": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "$ref": "#/components/schemas/Node"
+              }
+            }
+          }
+        },
+        "x-equal": true,
+        "x-same-shape": true
+      }
+    }
+  }
+}
